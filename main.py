@@ -66,7 +66,7 @@ def get_markup(update, context):
     return show_markup
 
 
-def send_one_request(update=None, context=None, bot=None):
+def send_one_request(chat_id, update=None, context=None, bot=None):
     if update and context:
         show_markup = get_markup(update, context)
 
@@ -124,7 +124,7 @@ def send_one_request(update=None, context=None, bot=None):
         log_file_name = './logs/' + time.strftime('%Y.%m.%d %H %M', time.localtime(time.time())) + '.log'
         fileutils.write_json_file(log_file_name, summary, cls=JsonEncoder.MyEncoder)
 
-        bot.send_message(chat_id=399560770,
+        bot.send_message(chat_id=chat_id,
             text=json.dumps(summary, sort_keys=True, indent=2, separators=(',', ': '), cls=JsonEncoder.MyEncoder))
 # print(json.dumps(summary, sort_keys=True, indent=2, separators=(',', ': '), cls=JsonEncoder.MyEncoder))
 
@@ -136,7 +136,10 @@ if __name__ == "__main__":
     # import sys
     # handler = logging.StreamHandler(sys.stdout)
     # default_logger.addHandler(handler)
-    my_token = '949243689:AAERKkrSP-tTA23TnEVFluVW9lhjjZ6ugjE'
+    tele_json = fileutils.read_json_file('./telegram.json')
+
+    my_token = tele_json['token']
+    chat_id = tele_json['chat_id']
 
     if args.serverMode:
         updater = Updater(my_token, use_context=True)
@@ -159,7 +162,7 @@ if __name__ == "__main__":
         updater.dispatcher.add_error_handler(error_callback)
 
         def callback_get(update, context):
-            send_one_request(update, context)
+            send_one_request(chat_id, update, context)
 
         updater.dispatcher.add_handler(CallbackQueryHandler(callback_get))
 
@@ -169,4 +172,4 @@ if __name__ == "__main__":
     else:
         bot = telegram.Bot(my_token)
 
-        send_one_request(bot=bot)
+        send_one_request(chat_id, bot=bot)

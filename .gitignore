@@ -1,5 +1,7 @@
 logs/
 venv/
+.idea/
+__pycache__
 asset.json
 settings.json
 KAKAO_settings.json
