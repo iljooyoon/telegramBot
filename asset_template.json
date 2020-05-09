@@ -1,0 +1,27 @@
+{
+  "info": [
+    {
+      "URI": "https://api.upbit.com/v1/ticker",
+      "exchange": "upbit",
+      "markets": "",
+      "method": "GET",
+      "minus_list": [
+        {
+        }
+      ],
+      "type": 0
+    },
+    {
+      "URI": "https://api.bithumb.com/public/transaction_history/{order_currency}_{payment_currency}?count=1",
+      "exchange": "bithumb",
+      "market_list": [
+      ],
+      "method": "GET",
+      "minus_list": [
+        {
+        }
+      ],
+      "type": 1
+    }
+  ]
+}

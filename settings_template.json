@@ -1,0 +1,25 @@
+{
+  "upbit" : {
+    "server_url" : "https://api.upbit.com",
+    "end_point": "/v1/accounts",
+    "method" : "GET",
+    "access_key" : "",
+    "secret_key" : "",
+    "expired_date" : "yyyy.mm.dd hh:mi"
+  },
+  "bithumb" : {
+    "server_url" : "https://api.bithumb.com",
+    "end_point": "/info/balance",
+    "method" : "POST",
+    "access_key" : "",
+    "secret_key" : ""
+  },
+  "bitfinex" : {
+    "server_url" : "https://api.bitfinex.com",
+    "end_point": "/v2/auth/r/wallets",
+    "method" : "POST",
+    "access_key" : "",
+    "secret_key" : ""
+  }
+}
+
