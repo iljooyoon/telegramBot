@@ -1,7 +1,6 @@
 import time
 import json
-import JsonEncoder
-import fileutils
+from utils import fileutils, JsonEncoder
 from request import MargetRequest
 import argparse
 import telegram
@@ -72,11 +71,7 @@ def send_one_request(chat_id, update=None, context=None, bot=None):
 
         # 텔레그램에서 나에게(chat_id) 메시지(text)를 보낸다.
         if update.callback_query.data == '자산':
-            mr = MargetRequest('./settings.json', './asset.json')
-
-            mr.get_exchange_rate()
-
-            mr.get_market_assets()
+            mr = MargetRequest('./settings/settings.json', './settings/asset.json')
 
             summary = mr.get_summary()
 
@@ -113,11 +108,7 @@ def send_one_request(chat_id, update=None, context=None, bot=None):
                                          chat_id=update.callback_query.message.chat_id,
                                          message_id=update.callback_query.message.message_id, reply_markup=show_markup)
     else:
-        mr = MargetRequest('./settings.json', './asset.json')
-
-        mr.get_exchange_rate()
-
-        mr.get_market_assets()
+        mr = MargetRequest('./settings/settings.json', './settings/asset.json')
 
         summary = mr.get_summary()
 
@@ -125,7 +116,7 @@ def send_one_request(chat_id, update=None, context=None, bot=None):
         fileutils.write_json_file(log_file_name, summary, cls=JsonEncoder.MyEncoder)
 
         bot.send_message(chat_id=chat_id,
-            text=json.dumps(summary, sort_keys=True, indent=2, separators=(',', ': '), cls=JsonEncoder.MyEncoder))
+                         text=json.dumps(summary, sort_keys=True, indent=2, separators=(',', ': '), cls=JsonEncoder.MyEncoder))
 # print(json.dumps(summary, sort_keys=True, indent=2, separators=(',', ': '), cls=JsonEncoder.MyEncoder))
 
 
@@ -136,7 +127,7 @@ if __name__ == "__main__":
     # import sys
     # handler = logging.StreamHandler(sys.stdout)
     # default_logger.addHandler(handler)
-    tele_json = fileutils.read_json_file('./telegram.json')
+    tele_json = fileutils.read_json_file('./settings/telegram.json')
 
     my_token = tele_json['token']
     chat_id = tele_json['chat_id']

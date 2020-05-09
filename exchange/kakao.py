@@ -3,11 +3,11 @@ import requests
 
 
 class KAKAO:
-    def __init__(self):
+    def __init__(self, setting_file):
         self.host = 'kapi.kakao.com'
         self.auth_host = 'kauth.kakao.com'
 
-        with open('KAKAO_settings.json', 'r') as setting_file:
+        with open(setting_file, 'r') as setting_file:
             settings = json.load(setting_file)
 
         self.client_id = settings['client_id']
@@ -123,7 +123,7 @@ class KAKAO:
 
 
 def main():
-    messenger = KAKAO()
+    messenger = KAKAO('../settings/KAKAO_settings.json')
     info = messenger.get_access_token_info()
     print(info)
     # messenger.refresh_token()

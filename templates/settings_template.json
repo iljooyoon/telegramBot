@@ -1,0 +1,19 @@
+// 1. file명을 settings.json 으로 변경 후 settings 폴더 아래로 복사한다.
+// 2. access_key 와 secret_key 를 입력 (upbit 의 expired_date 는 키 만료일을 메모하는 용도이며 사용하지 않음)
+// 3. 모든 주석 지우기
+{
+  "upbit" : {
+    "access_key" : "",
+    "secret_key" : "",
+    "expired_date" : "yyyy.mm.dd hh:mi"
+  },
+  "bithumb" : {
+    "access_key" : "",
+    "secret_key" : ""
+  },
+  "bitfinex" : {
+    "access_key" : "",
+    "secret_key" : ""
+  }
+}
+

@@ -1,0 +1,7 @@
+// 1. file명을 telegram.json 으로 변경 후 settings 폴더 아래로 복사한다.
+// 2. token 과 chat_id 를 입력한다.
+// 3. 모든 주석 지우기
+{
+  "token": "",
+  "chat_id": 0
+}
