@@ -1,4 +1,3 @@
-import requests
 from utils import fileutils
 from exchange.bithumb import bithumb
 from exchange.upbit import upbit
@@ -21,6 +20,23 @@ class MargetRequest:
             if m.check_valid():
                 asset_list.extend(m.get_wallets())
 
+        asset_list = self.add_manual_asset(asset_list)
+
+        asset_list = list(filter(lambda asset: asset[2] > 0, asset_list))
+
+        return asset_list
+
+    def add_manual_asset(self, asset_list):
+        for manual_asset in self.asset_data:
+            found = False
+            for asset in asset_list:
+                if asset[0] == manual_asset[0] and asset[1] == manual_asset[1]:
+                    asset[2] += manual_asset[2]
+                    found = True
+                    break
+            if not found:
+                asset_list.append(manual_asset)
+
         return asset_list
 
     def get_market_price(self, asset_list):
@@ -40,7 +56,7 @@ class MargetRequest:
         return market_price
 
     def add_summary(self, exchange, cur, count, market_price):
-        if count <= 0:
+        if count == 0:
             return
 
         if cur != 'KRW':
@@ -56,9 +72,6 @@ class MargetRequest:
             krw = count * market_price[cur]
         else:
             krw = count
-
-        if krw < 100:
-            return
 
         if self.summary.get(exchange) is None:
             self.summary[exchange] = 0
@@ -82,8 +95,6 @@ class MargetRequest:
 
     def get_summary(self):
         asset_list = self.get_market_assets()
-
-        asset_list.extend(self.asset_data)
 
         market_price = self.get_market_price(asset_list)
 

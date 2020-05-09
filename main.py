@@ -1,4 +1,6 @@
+import traceback
 import time
+import math
 import json
 from utils import fileutils, JsonEncoder
 from request import MargetRequest
@@ -17,25 +19,38 @@ args = parser.parse_args()
 
 
 def printout(json_data):
-    sorted_list = sorted(json_data.items(), key=lambda kv: 'z' if kv[0] == 'total' else kv[0])
+    sorted_list = sorted(json_data.items(), key=lambda kv: 'z' if kv[0] == 'total' else 'a' if kv[0] == 'others' else kv[0])
     for data in sorted_list:
         yield format(data[0], '<{}'.format(4 if len(data[0]) <= 4 else 8))
         yield ': '
         if isinstance(data[1], dict):
             sub_dict = data[1]
 
-            num = sub_dict['KRW']
-            precision = '.0f'
-            unit = '원'
-            width = 12
-            yield '{0:>{width}} {1}\n'.format(format(num, ',{}'.format(precision)), unit, width=width)
+            if 'KRW' in sub_dict:
+                num = sub_dict['KRW']
+                precision = '.0f'
+                unit = '원'
+                width = 12
+                yield '{0:>{width}} {1}\n'.format(format(num, ',{}'.format(precision)), unit, width=width)
 
-            num = sub_dict['count']
-            import math
-            precision = '.{}f'.format(max(6 - int(math.log(num, 10)), 0))
-            unit = '개'
-            width = 18
-            yield '{0:>{width}} {1}\n'.format(format(num, ',{}'.format(precision)), unit, width=width)
+                num = sub_dict['count']
+                if int(num) == num:
+                    precision = '.0f'
+                else:
+                    precision = '.{}f'.format(max(6 - int(math.log(num, 10)), 0))
+                unit = '개'
+                width = 18
+                yield '{0:>{width}} {1}\n'.format(format(num, ',{}'.format(precision)), unit, width=width)
+            else:
+                yield '\n'
+                for others_dict in sub_dict:
+                    yield format(others_dict, ' <{}'.format(4 if len(others_dict) <= 4 else 8))
+                    yield ': '
+                    num = sub_dict[others_dict]['count']
+                    precision = '.{}f'.format(max(6 - int(math.log(num, 10)), 0))
+                    unit = '개'
+                    width = 18
+                    yield '{0:>{width}} {1}\n'.format(format(num, ',{}'.format(precision)), unit, width=width)
         else:
             num = data[1]
             precision = '.0f'
@@ -71,11 +86,15 @@ def send_one_request(chat_id, update=None, context=None, bot=None):
 
         # 텔레그램에서 나에게(chat_id) 메시지(text)를 보낸다.
         if update.callback_query.data == '자산':
-            mr = MargetRequest('./settings/settings.json', './settings/asset.json')
+            try:
+                mr = MargetRequest('./settings/settings.json', './settings/asset.json')
 
-            summary = mr.get_summary()
+                summary = mr.get_summary()
 
-            text = ''.join(list(printout(summary)))
+                text = ''.join(list(printout(summary)))
+            except Exception:
+                traceback.print_exc()
+
             # text = json.dumps(summary, sort_keys=True, indent=2, separators=(',', ': '), cls=JsonEncoder.MyEncoder)
             context.bot.send_message(text=text,
                                      chat_id=update.callback_query.message.chat_id,
