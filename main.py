@@ -103,7 +103,7 @@ def send_one_request(chat_id, update=None, context=None, bot=None):
             res = requests.get('https://earthquake.kr:23490/query/USDKRW')
 
             if res.status_code == 200:
-                context.bot.send_message(text=res.json()['USDKRW'][0],
+                context.bot.send_message(text="원/달러 환율: {0} 전일 대비 {1:.2f} ({2:.2f}%)".format(*res.json()['USDKRW'][0:3]),
                                          chat_id=update.callback_query.message.chat_id,
                                          message_id=update.callback_query.message.message_id, reply_markup=show_markup)
         elif update.callback_query.data == '유가':
@@ -112,17 +112,36 @@ def send_one_request(chat_id, update=None, context=None, bot=None):
             if res.status_code == 200:
                 html = res.text
                 soup = BeautifulSoup(html, 'html5lib')
-                context.bot.send_message(text=soup.select(".today")[0].text.replace('\t', '').replace('\n', ' ').strip(),
+                context.bot.send_message(text=soup.select(".today")[0].text.replace('\t', '').replace('\n', ' ').replace('  ', ' ').replace('달러/배럴', '＄/bbl').replace('전일대비 -', '📉 -').replace('전일대비', '📈').strip(),
                                          chat_id=update.callback_query.message.chat_id,
                                          message_id=update.callback_query.message.message_id, reply_markup=show_markup)
         elif update.callback_query.data == '증시':
-            res = requests.get('https://search.naver.com/search.naver?where=nexearch&sm=tab_etc&ie=utf8&query=%EC%A3%BC%EC%9A%94%EC%A6%9D%EC%8B%9C&mra=bjY3')
+            res = requests.get(
+                'https://search.naver.com/search.naver?where=nexearch&sm=tab_etc&ie=utf8&query=%EC%A3%BC%EC%9A%94%EC%A6%9D%EC%8B%9C&mra=bjY3')
 
             if res.status_code == 200:
                 html = res.text
                 soup = BeautifulSoup(html, 'html5lib')
                 stock = soup.select('.dtcon_lst.wst dl')
-                text = stock[0].text.rstrip() + "\n" + stock[1].text.rstrip() + "\n" + stock[2].text.rstrip() + "\n" + stock[5].text.rstrip()
+
+                line = list()
+
+                tokens = stock_tokenizer(stock[0].text)
+                line.append(' '.join(tokens[1:3]))
+                line.append(' '.join(tokens[0:1] + tokens[3:]))
+
+                tokens = stock_tokenizer(stock[1].text)
+                line.append(' '.join(tokens[0:1] + tokens[3:]))
+
+                tokens = stock_tokenizer(stock[2].text)
+                line.append(' '.join(tokens[1:2]))
+                line.append(' '.join(tokens[0:1] + tokens[3:]))
+
+                tokens = stock_tokenizer(stock[5].text)
+                line.append(' '.join(tokens[0:1] + tokens[3:]))
+
+                text = '\n'.join(line)
+
                 context.bot.send_message(text=text,
                                          chat_id=update.callback_query.message.chat_id,
                                          message_id=update.callback_query.message.message_id, reply_markup=show_markup)
@@ -137,6 +156,13 @@ def send_one_request(chat_id, update=None, context=None, bot=None):
         bot.send_message(chat_id=chat_id,
                          text=json.dumps(summary, sort_keys=True, indent=2, separators=(',', ': '), cls=JsonEncoder.MyEncoder))
 # print(json.dumps(summary, sort_keys=True, indent=2, separators=(',', ': '), cls=JsonEncoder.MyEncoder))
+
+
+def stock_tokenizer(text):
+    import re
+    idx = re.search('[0-9]', text).regs[0][0]
+    text = text[:idx] + ' ' + text[idx:]
+    return text.replace('전일대비하락', '📉 ').replace('전일대비상승', '📈 ').strip().split()
 
 
 if __name__ == "__main__":

@@ -70,6 +70,9 @@ class MargetRequest:
                 return
 
             krw = count * market_price[cur]
+
+            if abs(krw) < 100:
+                return
         else:
             krw = count
 
