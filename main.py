@@ -53,12 +53,9 @@ def printout(json_data):
                     yield ': '
                     num = sub_dict[others_dict]['count']
                     precision = '.{}f'.format(max(6 - int(math.log(num, 10)), 0))
-                    price = sub_dict['price']
-                    if int(price) == price:
-                        price = format(price, ',{}'.format('.0f'))
                     unit = '개'
                     width = 18
-                    yield '{0:>{width}} {1} ({2} 원)\n'.format(format(num, ',{}'.format(precision)), unit, price, width=width)
+                    yield '{0:>{width}} {1}\n'.format(format(num, ',{}'.format(precision)), unit, width=width)
         else:
             num = data[1]
             precision = '.0f'
