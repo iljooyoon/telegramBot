@@ -84,7 +84,7 @@ class MargetRequest:
             if cur == 'KRW':
                 self.summary[cur] = 0
             else:
-                self.summary[cur] = {'KRW': 0, 'count': 0}
+                self.summary[cur] = {'KRW': 0, 'count': 0, 'price': market_price[cur]}
 
         if cur == 'KRW':
             self.summary[cur] += krw

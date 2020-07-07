@@ -38,9 +38,14 @@ def printout(json_data):
                     precision = '.0f'
                 else:
                     precision = '.{}f'.format(max(6 - int(math.log(num, 10)), 0))
+
+                price = sub_dict['price']
+                if int(price) == price:
+                    price = format(price, ',{}'.format('.0f'))
+
                 unit = '개'
                 width = 18
-                yield '{0:>{width}} {1}\n'.format(format(num, ',{}'.format(precision)), unit, width=width)
+                yield '{0:>{width}} {1} ({2} 원)\n'.format(format(num, ',{}'.format(precision)), unit, price, width=width)
             else:
                 yield '\n'
                 for others_dict in sub_dict:
@@ -48,9 +53,12 @@ def printout(json_data):
                     yield ': '
                     num = sub_dict[others_dict]['count']
                     precision = '.{}f'.format(max(6 - int(math.log(num, 10)), 0))
+                    price = sub_dict['price']
+                    if int(price) == price:
+                        price = format(price, ',{}'.format('.0f'))
                     unit = '개'
                     width = 18
-                    yield '{0:>{width}} {1}\n'.format(format(num, ',{}'.format(precision)), unit, width=width)
+                    yield '{0:>{width}} {1} ({2} 원)\n'.format(format(num, ',{}'.format(precision)), unit, price, width=width)
         else:
             num = data[1]
             precision = '.0f'
@@ -112,7 +120,13 @@ def send_one_request(chat_id, update=None, context=None, bot=None):
             if res.status_code == 200:
                 html = res.text
                 soup = BeautifulSoup(html, 'html5lib')
-                context.bot.send_message(text=soup.select(".today")[0].text.replace('\t', '').replace('\n', ' ').replace('  ', ' ').replace('달러/배럴', '＄/bbl').replace('전일대비 -', '📉 -').replace('전일대비', '📈').strip(),
+                text = soup.select(".today")[0].text.replace('\t', '').replace('\n', ' ').replace('  ', ' ').\
+                    replace('달러/배럴', '＄/bbl').strip()
+                if '-' in text:
+                    text = text.replace('전일대비  ', '📉 -')
+                else:
+                    text = text.replace('전일대비', '📈')
+                context.bot.send_message(text=text,
                                          chat_id=update.callback_query.message.chat_id,
                                          message_id=update.callback_query.message.message_id, reply_markup=show_markup)
         elif update.callback_query.data == '증시':
@@ -198,6 +212,8 @@ if __name__ == "__main__":
         updater.dispatcher.add_error_handler(error_callback)
 
         def callback_get(update, context):
+            if chat_id != update.effective_user.id or chat_id != update.effective_chat.id:
+                print(update)
             send_one_request(chat_id, update, context)
 
         updater.dispatcher.add_handler(CallbackQueryHandler(callback_get))
