@@ -10,15 +10,34 @@ class Exchange:
         self.valid = True
         self.access_key = None
         self.secret_key = None
+        self.addresses = None
 
     def load_settings(self, setting_file):
-        try:
-            setting = fileutils.read_json_file(setting_file)
+        setting = fileutils.read_json_file(setting_file)
 
-            self.access_key = setting[self.name]['access_key']
-            self.secret_key = setting[self.name]['secret_key']
-        except KeyError:
+        if self.name not in setting:
             self.valid = False
+            return
+
+        exchange = setting[self.name]
+
+        if self.name == 'wallet':
+            if len(exchange) == 0:
+                self.valid = False
+                return
+
+            self.addresses = exchange
+        else:
+            if 'access_key' not in exchange or 'secret_key' not in exchange:
+                self.valid = False
+                return
+
+            self.access_key = exchange['access_key']
+            self.secret_key = exchange['secret_key']
+
+            if self.access_key == "" or self.secret_key == "":
+                self.valid = False
+                return
 
     def get_wallets(self):
         raise NotImplementedError

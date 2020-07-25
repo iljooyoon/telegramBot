@@ -2,6 +2,7 @@ from utils import fileutils
 from exchange.bithumb import bithumb
 from exchange.upbit import upbit
 from exchange.bitfinex import bitfinex
+from exchange.wallet import wallet
 
 
 class MargetRequest:
@@ -11,7 +12,8 @@ class MargetRequest:
         self.summary = {}
         self.my_market = [upbit(setting_json_file_name),
                           bithumb(setting_json_file_name),
-                          bitfinex(setting_json_file_name)]
+                          bitfinex(setting_json_file_name),
+                          wallet(setting_json_file_name)]
 
     def get_market_assets(self):
         asset_list = []
@@ -70,11 +72,11 @@ class MargetRequest:
                 return
 
             krw = count * market_price[cur]
-
-            if abs(krw) < 100:
-                return
         else:
             krw = count
+
+        if abs(krw) < 100:
+            return
 
         if self.summary.get(exchange) is None:
             self.summary[exchange] = 0

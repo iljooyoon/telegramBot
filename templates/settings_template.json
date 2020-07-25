@@ -14,6 +14,13 @@
   "bitfinex" : {
     "access_key" : "",
     "secret_key" : ""
-  }
+  },
+  "wallet" : [
+    {
+      "addr" : "",
+      "apiKey" : "EK-c4TvZ-DtSAWU3-oU5jo",
+      "exclude_symbols" : []
+    }
+  ]
 }
 
