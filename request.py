@@ -5,7 +5,7 @@ from exchange.bitfinex import bitfinex
 from exchange.wallet import wallet
 
 
-class MargetRequest:
+class MarketRequest:
     def __init__(self, setting_json_file_name, asset_json_file_name):
         data = fileutils.read_json_file(asset_json_file_name)
         self.asset_data = [[key, k, v] for key in data.keys() for k, v in zip(data[key].keys(), data[key].values())]
@@ -54,6 +54,10 @@ class MargetRequest:
             market_price.update(mp)
 
             symbols.difference_update(set(mp.keys()))
+
+        # TODO USD 환율 넣기.
+        # if token['tokenInfo']['price'] is not False and token['tokenInfo']['price']['currency'] == 'USD':
+        #     exchange = requests.get('https://earthquake.kr:23490/query/USDKRW').json()['USDKRW'][0]
 
         return market_price
 

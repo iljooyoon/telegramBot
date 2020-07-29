@@ -30,15 +30,16 @@ class wallet(Exchange):
                 asset_list.append([self.name, cur, count])
 
                 for token in response['tokens']:
-                    cur = token['tokenInfo']['symbol']
-                    count = token['balance'] / 10**int(token['tokenInfo']['decimals'])
+                    if 'symbol' in token['tokenInfo']:
+                        cur = token['tokenInfo']['symbol']
+                        count = token['balance'] / 10**int(token['tokenInfo']['decimals'])
 
-                    asset_list.append([self.name, cur, count])
+                        asset_list.append([self.name, cur, count])
 
-                    if token['tokenInfo']['price']['currency'] == 'USD':
-                        exchange = requests.get('https://earthquake.kr:23490/query/USDKRW').json()['USDKRW'][0]
+                        if token['tokenInfo']['price'] is not False and token['tokenInfo']['price']['currency'] == 'USD':
+                            exchange = requests.get('https://earthquake.kr:23490/query/USDKRW').json()['USDKRW'][0]
 
-                        self.market_price[cur] = token['tokenInfo']['price']['rate'] * exchange
+                            self.market_price[cur] = token['tokenInfo']['price']['rate'] * exchange
 
         return asset_list
 

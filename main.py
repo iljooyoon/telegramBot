@@ -3,7 +3,7 @@ import time
 import math
 import json
 from utils import fileutils, JsonEncoder
-from request import MargetRequest
+from request import MarketRequest
 import argparse
 import telegram
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, MessageHandler, Filters
@@ -92,7 +92,7 @@ def send_one_request(chat_id, update=None, context=None, bot=None):
         # 텔레그램에서 나에게(chat_id) 메시지(text)를 보낸다.
         if update.callback_query.data == '자산':
             try:
-                mr = MargetRequest('./settings/settings.json', './settings/asset.json')
+                mr = MarketRequest('./settings/settings.json', './settings/asset.json')
 
                 summary = mr.get_summary()
 
@@ -157,7 +157,7 @@ def send_one_request(chat_id, update=None, context=None, bot=None):
                                          chat_id=update.callback_query.message.chat_id,
                                          message_id=update.callback_query.message.message_id, reply_markup=show_markup)
     else:
-        mr = MargetRequest('./settings/settings.json', './settings/asset.json')
+        mr = MarketRequest('./settings/settings.json', './settings/asset.json')
 
         summary = mr.get_summary()
 

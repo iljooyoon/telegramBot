@@ -2,8 +2,14 @@ import json
 
 
 def read_json_file(file_name):
-    with open(file_name) as json_file:
-        file_content = json.load(json_file)
+    try:
+        with open(file_name) as json_file:
+            file_content = json.load(json_file)
+    except Exception as e:
+        print(file_name)
+        print(json_file)
+        print(e)
+        exit(0)
 
     return file_content
 
