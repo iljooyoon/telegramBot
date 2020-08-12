@@ -1,3 +1,5 @@
+import requests
+
 from utils import fileutils
 from exchange.bithumb import bithumb
 from exchange.upbit import upbit
@@ -44,7 +46,7 @@ class MarketRequest:
     def get_market_price(self, asset_list):
         symbols = set([symbol for _, symbol, _ in asset_list])
 
-        symbols.difference_update('KRW')
+        symbols.difference_update(['KRW'])
 
         market_price = {}
 
@@ -55,9 +57,14 @@ class MarketRequest:
 
             symbols.difference_update(set(mp.keys()))
 
-        # TODO USD 환율 넣기.
-        # if token['tokenInfo']['price'] is not False and token['tokenInfo']['price']['currency'] == 'USD':
-        #     exchange = requests.get('https://earthquake.kr:23490/query/USDKRW').json()['USDKRW'][0]
+        for symbol in symbols:
+            q = symbol + 'KRW'
+            res_json = requests.get('https://earthquake.kr:23490/query/{}'.format(q)).json()
+
+            if q in res_json:
+                exchange = res_json[q][0]
+
+                market_price.update({symbol: exchange})
 
         return market_price
 

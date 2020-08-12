@@ -42,6 +42,8 @@ def printout(json_data):
                 price = sub_dict['price']
                 if int(price) == price:
                     price = format(price, ',{}'.format('.0f'))
+                else:
+                    price = format(price, ',{}'.format('.2f'))
 
                 unit = '개'
                 width = 18
