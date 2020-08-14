@@ -59,6 +59,9 @@ class bithumb(Exchange):
         for s in symbols:
             res = self.conn.get(self.host, end_point.format(**{'order_currency': s, 'payment_currency': 'KRW'}))
 
+            if res.status_code != 200:
+                continue
+
             response = res.json()
 
             if response['status'] != '0000':
