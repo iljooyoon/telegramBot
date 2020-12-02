@@ -30,7 +30,7 @@ class wallet(Exchange):
                 asset_list.append([self.name, cur, count])
 
                 for token in response['tokens']:
-                    if 'symbol' in token['tokenInfo']:
+                    if 'symbol' in token['tokenInfo'] and token['tokenInfo']['price'] is not False:
                         cur = token['tokenInfo']['symbol']
                         count = token['balance'] / 10**int(token['tokenInfo']['decimals'])
 

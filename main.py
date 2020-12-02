@@ -99,8 +99,11 @@ def send_one_request(chat_id, update=None, context=None, bot=None):
                 summary = mr.get_summary()
 
                 text = ''.join(list(printout(summary)))
+            except RuntimeError as e:
+                text = '{}({})'.format(e.args[0], e.args[1])
             except Exception:
                 traceback.print_exc()
+                text = 'unknown error'
 
             # text = json.dumps(summary, sort_keys=True, indent=2, separators=(',', ': '), cls=JsonEncoder.MyEncoder)
             context.bot.send_message(text=text,

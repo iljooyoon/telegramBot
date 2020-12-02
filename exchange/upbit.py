@@ -43,15 +43,18 @@ class upbit(Exchange):
 
         response = res.json()
 
-        asset_list = []
+        if res.status_code == 200:
+            asset_list = []
 
-        for currency in response:
-            cur = currency['currency']
-            count = float(currency['balance']) + float(currency['locked'])
+            for currency in response:
+                cur = currency['currency']
+                count = float(currency['balance']) + float(currency['locked'])
 
-            asset_list.append([self.name, cur, count])
+                asset_list.append([self.name, cur, count])
 
-        return asset_list
+            return asset_list
+        elif 'error' in response:
+            raise RuntimeError(response['error']['message'], self.name, response['error'])
 
     def get_all_market_symbol(self):
         end_point = '/v1/market/all?isDetails=false'
