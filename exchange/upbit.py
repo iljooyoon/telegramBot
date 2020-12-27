@@ -5,12 +5,10 @@ from exchange.Exchange import Exchange
 
 
 class upbit(Exchange):
-    def __init__(self, setting_file):
-        super(upbit, self).__init__('upbit')
+    def __init__(self, setting_file, asset_file):
+        super(upbit, self).__init__(self.__class__.__name__, setting_file, asset_file)
 
         self.host = "https://api.upbit.com"
-
-        self.load_settings(setting_file)
 
     def get_wallets(self):
         end_point = "/v1/accounts"
@@ -44,15 +42,15 @@ class upbit(Exchange):
         response = res.json()
 
         if res.status_code == 200:
-            asset_list = []
+            self.asset_list = {}
 
             for currency in response:
                 cur = currency['currency']
                 count = float(currency['balance']) + float(currency['locked'])
 
-                asset_list.append([self.name, cur, count])
+                self.asset_list.setdefault(cur, count)
 
-            return asset_list
+            return self.asset_list.keys()
         elif 'error' in response:
             raise RuntimeError(response['error']['message'], self.name, response['error'])
 

@@ -19,7 +19,18 @@ args = parser.parse_args()
 
 
 def printout(json_data):
-    sorted_list = sorted(json_data.items(), key=lambda kv: 'z' if kv[0] == 'total' else 'a' if kv[0] == 'others' else kv[0])
+    sorted_list = sorted(json_data.items(),
+                         key=lambda kv: 'z' if kv[0] == 'total' else
+                                        'yx0' if kv[0] == 'Total Assets' else
+                                        'yx1' if kv[0] == 'Net Worth' else
+                                        'yx2' if kv[0] == 'Total Debt' else
+                                        'yx3' if kv[0] == 'Wallet' else
+                                        'yx4' if kv[0] == 'Deposits' else
+                                        'yx5' if kv[0] == 'Yield Farming' else
+                                        'yx6' if kv[0] == 'Debt' else
+                                        'a' if kv[0] == 'others' else kv[0]
+                         )
+
     for data in sorted_list:
         yield format(data[0], '<{}'.format(4 if len(data[0]) <= 4 else 8))
         yield ': '
@@ -54,7 +65,7 @@ def printout(json_data):
                     yield format(others_dict, ' <{}'.format(4 if len(others_dict) <= 4 else 8))
                     yield ': '
                     num = sub_dict[others_dict]['count']
-                    precision = '.{}f'.format(max(6 - int(math.log(num, 10)), 0))
+                    precision = '.{}f'.format(max(6 - int(math.log(abs(num), 10)), 0))
                     unit = '개'
                     width = 18
                     yield '{0:>{width}} {1}\n'.format(format(num, ',{}'.format(precision)), unit, width=width)
@@ -79,6 +90,7 @@ def get_markup(update, context):
     show_list = list()
 
     show_list.append(InlineKeyboardButton("자산", callback_data="자산"))
+    show_list.append(InlineKeyboardButton("자산(beta)", callback_data="자산(beta)"))
     show_list.append(InlineKeyboardButton("환율", callback_data="환율"))
     show_list.append(InlineKeyboardButton("유가", callback_data="유가"))
     show_list.append(InlineKeyboardButton("증시", callback_data="증시"))
@@ -95,6 +107,23 @@ def send_one_request(chat_id, update=None, context=None, bot=None):
         if update.callback_query.data == '자산':
             try:
                 mr = MarketRequest('./settings/settings.json', './settings/asset.json')
+
+                summary = mr.get_summary()
+
+                text = ''.join(list(printout(summary)))
+            except RuntimeError as e:
+                text = '{}({})'.format(e.args[0], e.args[1])
+            except Exception:
+                traceback.print_exc()
+                text = 'unknown error'
+
+            # text = json.dumps(summary, sort_keys=True, indent=2, separators=(',', ': '), cls=JsonEncoder.MyEncoder)
+            context.bot.send_message(text=text,
+                                     chat_id=update.callback_query.message.chat_id,
+                                     message_id=update.callback_query.message.message_id, reply_markup=show_markup)
+        elif update.callback_query.data == '자산(beta)':
+            try:
+                mr = MarketRequest('./settings/settings.json', './settings/asset.json', beta=True)
 
                 summary = mr.get_summary()
 

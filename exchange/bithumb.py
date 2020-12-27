@@ -9,12 +9,10 @@ from exchange.Exchange import Exchange
 
 
 class bithumb(Exchange):
-    def __init__(self, setting_file):
-        super(bithumb, self).__init__('bithumb')
+    def __init__(self, setting_file, asset_file):
+        super(bithumb, self).__init__(self.__class__.__name__, setting_file, asset_file)
 
         self.host = "https://api.bithumb.com"
-
-        self.load_settings(setting_file)
 
     def get_wallets(self):
         end_point = "/info/balance"
@@ -35,7 +33,7 @@ class bithumb(Exchange):
 
         response = res.json()
 
-        asset_list = []
+        self.asset_list = {}
 
         for key in response['data'].keys():
             if not key.startswith('total_') or decimal.Decimal(response['data'][key]) == 0:
@@ -44,9 +42,9 @@ class bithumb(Exchange):
             cur = key.split('_')[1].upper()
             count = float(response['data'][key])
 
-            asset_list.append([self.name, cur, count])
+            self.asset_list.setdefault(cur, count)
 
-        return asset_list
+        return self.asset_list.keys()
 
     def get_market_price(self, symbols):
         end_point = '/public/transaction_history/{order_currency}_{payment_currency}?count=1'

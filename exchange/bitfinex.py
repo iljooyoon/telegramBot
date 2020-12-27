@@ -7,12 +7,10 @@ from exchange.Exchange import Exchange
 
 
 class bitfinex(Exchange):
-    def __init__(self, setting_file):
-        super(bitfinex, self).__init__('bitfinex')
+    def __init__(self, setting_file, asset_file):
+        super(bitfinex, self).__init__(self.__class__.__name__, setting_file, asset_file)
 
         self.host = "https://api.bitfinex.com"
-
-        self.load_settings(setting_file)
 
     def get_wallets(self):
         end_point = "/v2/auth/r/wallets"
@@ -32,7 +30,7 @@ class bitfinex(Exchange):
 
         res = self.conn.post(self.host, end_point, headers=headers, body=raw_body, verify=True)
 
-        asset_list = []
+        self.asset_list = {}
 
         if res.status_code == 200:
             response = res.json()
@@ -41,11 +39,11 @@ class bitfinex(Exchange):
                 cur = currency[1]
                 count = float(currency[2])
 
-                asset_list.append([self.name, cur, count])
+                self.asset_list.setdefault(cur, count)
         else:
             print(self.name, res.status_code)
 
-        return asset_list
+        return self.asset_list.keys()
 
     def get_market_price(self, symbols):
         return {}
