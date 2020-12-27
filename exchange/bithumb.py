@@ -44,7 +44,7 @@ class bithumb(Exchange):
 
             self.asset_list.setdefault(cur, count)
 
-        return self.asset_list.keys()
+        return [*self.asset_list, *self.asset_data]
 
     def get_market_price(self, symbols):
         end_point = '/public/transaction_history/{order_currency}_{payment_currency}?count=1'

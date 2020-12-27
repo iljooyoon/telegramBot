@@ -107,7 +107,7 @@ class wallet(Exchange):
         for key in self.asset_list.keys():
             self.market_price[key] = exchange
 
-        return self.asset_list.keys()
+        return [*self.asset_list, *self.asset_data]
 
     def get_all_assets(self, api_key, types):
         all_assets = {}
@@ -177,7 +177,7 @@ class wallet(Exchange):
 
                             self.market_price[cur] = token['tokenInfo']['price']['rate'] * exchange
 
-        return self.asset_list.keys()
+        return [*self.asset_list, *self.asset_data]
 
     def get_market_price(self, symbols):
         return self.market_price

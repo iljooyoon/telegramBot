@@ -50,7 +50,7 @@ class upbit(Exchange):
 
                 self.asset_list.setdefault(cur, count)
 
-            return self.asset_list.keys()
+            return [*self.asset_list, *self.asset_data]
         elif 'error' in response:
             raise RuntimeError(response['error']['message'], self.name, response['error'])
 
