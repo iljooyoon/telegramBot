@@ -4,9 +4,9 @@ import jwt
 from exchange.Exchange import Exchange
 
 
-class upbit(Exchange):
+class Upbit(Exchange):
     def __init__(self, setting_file, asset_file):
-        super(upbit, self).__init__(self.__class__.__name__, setting_file, asset_file)
+        super(Upbit, self).__init__(self.__class__.__name__, setting_file, asset_file)
 
         self.host = "https://api.upbit.com"
 

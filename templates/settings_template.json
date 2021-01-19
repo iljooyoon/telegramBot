@@ -2,20 +2,20 @@
 // 2. access_key 와 secret_key 를 입력 (upbit 의 expired_date 는 키 만료일을 메모하는 용도이며 사용하지 않음)
 // 3. 모든 주석 지우기
 {
-  "upbit" : {
+  "Upbit" : {
     "access_key" : "",
     "secret_key" : "",
     "expired_date" : "yyyy.mm.dd hh:mi"
   },
-  "bithumb" : {
+  "Bithumb" : {
     "access_key" : "",
     "secret_key" : ""
   },
-  "bitfinex" : {
+  "Bitfinex" : {
     "access_key" : "",
     "secret_key" : ""
   },
-  "wallet" : [
+  "Wallet" : [
     {
       "addr" : "",
       "apiKey" : "EK-c4TvZ-DtSAWU3-oU5jo",

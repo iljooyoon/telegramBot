@@ -1,7 +1,7 @@
 import requests
 
 
-class http:
+class Http:
     def get(self, host, end_point, headers=None, params=None, **kwargs):
         return self.request('get', host, end_point, headers, params, **kwargs)
 

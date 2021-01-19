@@ -2,14 +2,14 @@
 // 2. 수동으로 추가할 코인을 입력한다.
 // 3. 모든 주석 지우기
 {
-  "upbit": {
+  "Upbit": {
     "COIN Symbol1": -9180,
     "COIN Symbol2": -9180
   },
-  "bithumb": {
+  "Bithumb": {
     "COIN Symbol3": 50
   },
-  "MEW": {
+  "Wallet": {
     "COIN Symbol4": 100
   }
 }

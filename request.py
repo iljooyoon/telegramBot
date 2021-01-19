@@ -1,17 +1,17 @@
 import requests
 
-from exchange.bithumb import bithumb
-from exchange.upbit import upbit
-from exchange.bitfinex import bitfinex
-from exchange.wallet import wallet
+from exchange.bithumb import Bithumb
+from exchange.upbit import Upbit
+from exchange.bitfinex import Bitfinex
+from exchange.wallet import Wallet
 
 
 class MarketRequest:
     def __init__(self, setting_json_file_name, asset_json_file_name, beta=False):
-        self.my_market = [upbit(setting_json_file_name, asset_json_file_name),
-                          bithumb(setting_json_file_name, asset_json_file_name),
-                          bitfinex(setting_json_file_name, asset_json_file_name),
-                          wallet(setting_json_file_name, asset_json_file_name, beta)]
+        self.my_market = [Upbit(setting_json_file_name, asset_json_file_name),
+                          Bithumb(setting_json_file_name, asset_json_file_name),
+                          Bitfinex(setting_json_file_name, asset_json_file_name),
+                          Wallet(setting_json_file_name, asset_json_file_name, beta)]
 
     def get_market_assets(self):
         asset_list = []

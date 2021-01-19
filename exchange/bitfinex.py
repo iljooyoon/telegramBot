@@ -6,9 +6,9 @@ import json
 from exchange.Exchange import Exchange
 
 
-class bitfinex(Exchange):
+class Bitfinex(Exchange):
     def __init__(self, setting_file, asset_file):
-        super(bitfinex, self).__init__(self.__class__.__name__, setting_file, asset_file)
+        super(Bitfinex, self).__init__(self.__class__.__name__, setting_file, asset_file)
 
         self.host = "https://api.bitfinex.com"
 
@@ -39,7 +39,7 @@ class bitfinex(Exchange):
                 cur = currency[1]
                 count = float(currency[2])
 
-                self.asset_list.setdefault(cur, count)
+                self.asset_list[cur] = self.asset_list.get(cur, 0) + count
         else:
             print(self.name, res.status_code)
 

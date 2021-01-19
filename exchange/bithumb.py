@@ -8,9 +8,9 @@ import decimal
 from exchange.Exchange import Exchange
 
 
-class bithumb(Exchange):
+class Bithumb(Exchange):
     def __init__(self, setting_file, asset_file):
-        super(bithumb, self).__init__(self.__class__.__name__, setting_file, asset_file)
+        super(Bithumb, self).__init__(self.__class__.__name__, setting_file, asset_file)
 
         self.host = "https://api.bithumb.com"
 

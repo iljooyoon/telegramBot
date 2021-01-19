@@ -1,11 +1,11 @@
-from connection.http import http
+from connection.http import Http
 import utils.fileutils as fileutils
 
 
 class Exchange:
     def __init__(self, name, setting_file, asset_file):
         self.name = name
-        self.conn = http()
+        self.conn = Http()
 
         self.valid = True
         self.access_key = None
@@ -26,7 +26,7 @@ class Exchange:
 
         exchange = setting[self.name]
 
-        if self.name == 'wallet':
+        if self.name == 'Wallet':
             if len(exchange) == 0:
                 self.valid = False
                 return

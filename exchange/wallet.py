@@ -5,9 +5,9 @@ from bs4 import BeautifulSoup
 from exchange.Exchange import Exchange
 
 
-class wallet(Exchange):
+class Wallet(Exchange):
     def __init__(self, setting_file, asset_file, beta):
-        super(wallet, self).__init__(self.__class__.__name__, setting_file, asset_file)
+        super(Wallet, self).__init__(self.__class__.__name__, setting_file, asset_file)
 
         self.beta = beta
 
@@ -166,16 +166,17 @@ class wallet(Exchange):
                 self.asset_list.setdefault(cur, count)
 
                 for token in response['tokens']:
-                    if 'symbol' in token['tokenInfo'] and token['tokenInfo']['price'] is not False:
-                        cur = token['tokenInfo']['symbol']
-                        count = token['balance'] / 10**int(token['tokenInfo']['decimals'])
+                    token_info = token['tokenInfo']
+                    if 'symbol' in token_info and token_info['price'] is not False:
+                        cur = token_info['symbol']
+                        count = token['balance'] / 10**int(token_info['decimals'])
 
                         self.asset_list.setdefault(cur, count)
 
-                        if token['tokenInfo']['price'] is not False and token['tokenInfo']['price']['currency'] == 'USD':
+                        if token_info['price'] is not False and token_info['price']['currency'] == 'USD':
                             exchange = requests.get('https://earthquake.kr:23490/query/USDKRW').json()['USDKRW'][0]
 
-                            self.market_price[cur] = token['tokenInfo']['price']['rate'] * exchange
+                            self.market_price[cur] = token_info['price']['rate'] * exchange
 
         return [*self.asset_list, *self.asset_data]
 
@@ -253,11 +254,15 @@ def get_debt(all_assets):
 
 
 def get_deposits(all_assets):
-    deposits = []
+    deposits = list()
 
     # synthetix
-    deposits.append({'balanceUSD': (all_assets['synthetix']['collateral'] - all_assets['synthetix']['unlockedSnx']) *
-                                   all_assets['synthetix']['usdToSnxPrice']})
+    deposits.append(
+        {
+            'balanceUSD': all_assets['synthetix']['usdToSnxPrice'] *
+                   (all_assets['synthetix']['collateral'] - all_assets['synthetix']['unlockedSnx'])
+        }
+    )
     deposits.append(all_assets['synthetix']['iETHReward'])
 
     # dodo
@@ -321,8 +326,10 @@ def get_deposits(all_assets):
         return d['balanceUSD'] >= 0.01 or ('label' in d and (d['label'] == 'Locked CRV' or d['label'] == 'Vesting YAM'))
     return sum(map(lambda d: d['balanceUSD'], filter(filter_cond, deposits)))
 
+
 def get_investments(all_assets):
     return 0
+
 
 def get_liquiditypools(all_assets):
     liquiditypools = []
@@ -344,7 +351,7 @@ def get_liquiditypools(all_assets):
 
 
 def get_farming(all_assets):
-    farming = []
+    farming = list()
 
     # compound
     farming.append(all_assets['compound']['rewards']['compBalanceUSD'])
